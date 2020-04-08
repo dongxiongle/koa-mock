@@ -5,7 +5,7 @@ const app = new Koa();
 app.use(async (ctx, next) => {
   // ctx.set('Access-Control-Allow-Origin', '*');
   ctx.set('Access-Control-Allow-Methods', 'PUT,DELETE,POST,GET');
-  ctx.set('Access-Control-Max-Age', 3600*24);
+  ctx.set('Access-Control-Max-Age', 3600 * 24);
   await next();
 });
 
