@@ -1,58 +1,47 @@
 import Koa, { ParameterizedContext } from 'koa';
 
-import axios, { AxiosRequestConfig } from 'axios';
-
 import http from 'http';
 
 import router from './router';
+import { resolve } from 'url';
 
-const baseURL = 'http://testadminloan2.518dai.com';
+const baseURL = 'testadminloan2.518dai.com';
 
 const app = new Koa();
 
-const getList = function(options: any) {
-  const promise = new Promise(function(resolve, reject) {
-    console.log(2);
-    let req = http.request(options);
-    req.on('response', (res: any) => {
-      let data = '';
+const proxy = function(options: any) {
+  return new Promise<string>((resolve, reject) => {
+    const httpRequest = http.request(options, (res: any) => {
+      let _data = '';
       res.on('data', (chunk: any) => {
-        data += chunk;
+        _data += chunk;
       });
       res.on('end', () => {
-        resolve(data);
+        console.log(options);
+        console.log(_data);
+        resolve(_data);
       })
-    });
-    req.end();
-  });
-  return promise;
+    })
+    httpRequest.end();
+  })
 }
 
-app.use(async (ctx: ParameterizedContext, next) => {
+app.use(async (ctx: any, next: any) => {
   await next();
   const { status } = ctx;
   if (status == 404) {
-    const { request } = ctx;
-    request.path = 'http://testadminloan2.518dai.com' + request.url;
-    // request.header.connection = 'keep-alive';
-    console.log(request);
-    // await axios({
-    //   method: request.method,
-    //   url: baseURL + request.url,
-    //   headers: request.header
-    // } as AxiosRequestConfig).then((res: any) => {
-    //   ctx.body = res;
-    // }).catch((e: any) => {
-    //   // console.log(e.request.headers);
-    //   // console.log(e.response);
-    //   ctx.body = e;
-    // });
-    console.log(1);
-    const req = await getList(request);
-    // console.log(req);
-    ctx.body = req;
+    const options = {
+      protocol: 'http:',
+      host: baseURL,
+      method: ctx.request.method,
+      path: ctx.request.url,
+      header: ctx.request.header
+    };
+    await proxy(options).then((res: any) => {
+      ctx.response.body = res;
+    });
   }
-});
+})
 app.use(router.routes());
 app.use(router.allowedMethods());
 
