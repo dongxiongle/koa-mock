@@ -1,47 +1,27 @@
 import Koa, { ParameterizedContext } from 'koa';
-
-import http from 'http';
+import bodyParse from 'koa-bodyparser';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 import router from './router';
 import { resolve } from 'url';
 
-const baseURL = 'testadminloan2.518dai.com';
+const target = 'https://testadmin03.518dai.com';
 
 const app = new Koa();
-
-const proxy = function(options: any) {
-  return new Promise<string>((resolve, reject) => {
-    const httpRequest = http.request(options, (res: any) => {
-      let _data = '';
-      res.on('data', (chunk: any) => {
-        _data += chunk;
-      });
-      res.on('end', () => {
-        console.log(options);
-        console.log(_data);
-        resolve(_data);
-      })
-    })
-    httpRequest.end();
-  })
-}
 
 app.use(async (ctx: any, next: any) => {
   await next();
   const { status } = ctx;
+  console.log(status);
   if (status == 404) {
-    const options = {
-      protocol: 'http:',
-      host: baseURL,
-      method: ctx.request.method,
-      path: ctx.request.url,
-      header: ctx.request.header
-    };
-    await proxy(options).then((res: any) => {
-      ctx.response.body = res;
-    });
+    createProxyMiddleware({
+      target,
+      changeOrigin: true,
+      pathRewrite: { '^/api': '' }
+    })
   }
 })
+app.use(bodyParse());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
