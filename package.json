@@ -10,14 +10,14 @@
     "build": "tsc"
   },
   "dependencies": {
-    "http-proxy-middleware": "^1.0.6",
+    "axios": "^0.21.0",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^9.4.0",
     "mockjs": "^1.1.0"
   },
   "devDependencies": {
-    "@types/http-proxy-middleware": "^0.19.3",
+    "@types/axios": "^0.14.0",
     "@types/koa": "^2.11.4",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-router": "^7.4.1",

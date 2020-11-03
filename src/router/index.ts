@@ -1,5 +1,6 @@
 import Router from 'koa-router';
 import { signChannel, signApply } from '../mock/index';
+import { resolve } from 'dns';
 
 // const { signChannel, signApply } = mock;
 
@@ -16,7 +17,13 @@ router.get('/v1/loan/signChannel', async (ctx: any) => {
   ctx.response.body = signChannel;
 });
 router.post('/v1/loan/signApply', async (ctx: any) => {
-  ctx.response.body = signApply;
+  console.log(ctx.request.body);
+  await new Promise((resolve, reject) => {
+    setTimeout(() => {
+      ctx.response.body = signApply;
+      resolve();
+    }, 1000);
+  })
 });
 router.post('/v1/loan/signConfirm', async (ctx: any) => {
   console.log(ctx.request.body);

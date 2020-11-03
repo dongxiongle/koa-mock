@@ -1,24 +1,29 @@
 import Koa, { ParameterizedContext } from 'koa';
 import bodyParse from 'koa-bodyparser';
-import { createProxyMiddleware } from 'http-proxy-middleware';
+import proxy from './proxy/index';
 
 import router from './router';
-import { resolve } from 'url';
-
-const target = 'https://testadmin03.518dai.com';
 
 const app = new Koa();
+
+app.proxy = true;
 
 app.use(async (ctx: any, next: any) => {
   await next();
   const { status } = ctx;
-  console.log(status);
   if (status == 404) {
-    createProxyMiddleware({
-      target,
-      changeOrigin: true,
-      pathRewrite: { '^/api': '' }
-    })
+    const { url, headers, method, body } = ctx.request;
+    console.log(body);
+    const res = await proxy({
+      method,
+      headers,
+      data: body,
+      url
+    });
+    // ctx.response.headers = res.headers;
+    ctx.response.status = res.status;
+    ctx.response.message = res.statusText;
+    ctx.response.body = res.data;
   }
 })
 app.use(bodyParse());
