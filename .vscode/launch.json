@@ -8,8 +8,8 @@
       "type": "node",
       "request": "launch",
       "name": "nodemon",
-      "runtimeExecutable": "nodemon",
-      "program": "${workspaceFolder}/src/index.ts",
+      "args": ["src/index.ts"],
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
       "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

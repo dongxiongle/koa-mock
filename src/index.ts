@@ -1,29 +1,28 @@
 import Koa, { ParameterizedContext } from 'koa';
 import bodyParse from 'koa-bodyparser';
-import proxy from './proxy/index';
+import axios from './proxy/index';
 
 import router from './router';
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 const app = new Koa();
 
-app.proxy = true;
+// const getData = async function (config) {
+
+// }
 
 app.use(async (ctx: any, next: any) => {
+  console.log(1);
   await next();
   const { status } = ctx;
+  console.log(2);
   if (status == 404) {
     const { url, headers, method, body } = ctx.request;
-    console.log(body);
-    const res = await proxy({
-      method,
-      headers,
-      data: body,
-      url
-    });
-    // ctx.response.headers = res.headers;
-    ctx.response.status = res.status;
-    ctx.response.message = res.statusText;
-    ctx.response.body = res.data;
+    console.log(4);
+    const res = await axios({url, method});
+    console.log(res);
+    ctx.body = res;
   }
 })
 app.use(bodyParse());

@@ -7,7 +7,6 @@ import { resolve } from 'dns';
 const router = new Router();
 
 router.get('/', async (ctx: any) => {
-  console.log('user');
   ctx.body = 'home';
 });
 router.get('/user', async (ctx: any) => {
