@@ -1,23 +1,8 @@
-import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
-import { config } from 'process';
+import httpProxy from 'http-proxy';
 
-const baseURL = 'http://testadmin03.518dai.com';
-
-axios.interceptors.request.use((config: AxiosRequestConfig) => {
-  console.log(3);
-  config.url = `${baseURL}${config.url}`;
-  config.headers.origin = baseURL;
-  config.headers.referer = baseURL;
-  return config;
+const  proxy = httpProxy.createProxy({target: 'https://testadmin03.518dai.com', secure: false});
+proxy.on('error', e => {
+  console.log(e);
 });
 
-axios.interceptors.response.use((res: AxiosResponse | any) => {
-  console.log(5);
-  return res;
-}, (error) => {
-  // console.log(error);
-  console.log('err');
-  return error;
-})
-
-export default axios;
+export default proxy;
