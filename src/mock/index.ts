@@ -1,6 +1,6 @@
-import { mock } from 'mockjs';
+
 // 查询签约渠道
-const signChannel = mock({
+const signChannel = {
   code: '200',
   'data|1-10': [
     {
@@ -15,12 +15,12 @@ const signChannel = mock({
       "sortNum": "string"
     }
   ]
-});
+};
 // 签约申请
-const signApply = mock({
+const signApply = {
   code: 200,
   data: '@string("number", 4)'
-})
+}
 
 export {
   signChannel,

@@ -1,24 +1,26 @@
 import Koa, { ParameterizedContext } from 'koa';
 import bodyParse from 'koa-bodyparser';
+import cors from '@koa/cors';
 
 import proxy from './proxy/index';
 
 import router from './router';
 
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const app = new Koa();
 
-// const getData = async function (config) {
-
-// }
-
+app.use(cors({
+  origin: '*',
+  exposeHeaders: ['Authorization'],
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type, Authorization', 'Accept', 'Origin', 'X-Requested-With']
+}));
 app.use(async (ctx: any, next: any) => {
-  console.log(1);
+  if (ctx.method === 'OPTIONS') {
+    ctx.body = '';
+  }
   await next();
-  const { status } = ctx;
-  console.log(2, status);
 })
+app.use(proxy);
 app.use(bodyParse());
 app.use(router.routes());
 app.use(router.allowedMethods());
